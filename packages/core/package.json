@@ -1,0 +1,20 @@
+{
+  "name": "reins",
+  "version": "0.1.0",
+  "description": "Budget governor and governance ledger for autonomous AI agents",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "files": ["dist", "README.md"],
+  "engines": { "node": ">=22.5" },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "yaml": "^2.6.0"
+  },
+  "keywords": ["ai", "agents", "budget", "governance", "audit", "policy", "claude", "openai"]
+}
