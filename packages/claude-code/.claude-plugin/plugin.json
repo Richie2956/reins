@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "description": "Budget governor and policy engine for Claude Code: every tool call is checked against your reins.yml, spend is metered per model into a hash chained ledger, and the session learns its tier and remaining budget",
   "author": { "name": "Reins" },
-  "homepage": "https://github.com/reins-dev/reins",
-  "repository": "https://github.com/reins-dev/reins",
+  "homepage": "https://github.com/Richie2956/reins",
+  "repository": "https://github.com/Richie2956/reins",
   "license": "MIT",
   "keywords": ["budget", "governance", "policy", "audit", "ledger", "agents"]
 }

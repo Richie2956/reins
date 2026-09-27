@@ -19,7 +19,7 @@ The plugin is a thin layer of hooks. All the work is done by the `reins` command
 2. Add this repository as a marketplace and install the plugin from inside Claude Code:
 
    ```
-   /plugin marketplace add reins-dev/reins
+   /plugin marketplace add Richie2956/reins
    /plugin install reins@reins
    ```
 
