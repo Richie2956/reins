@@ -52,7 +52,7 @@ Not yet. The proxy covers metering for any language and `reins check` can be cal
 
 ## Where did the idea come from?
 
-Conway's Automaton. It has survival tiers that get cheaper as the agent's wallet empties. Reins keeps the tiers and drops the wallet, and adds the policy engine and the ledger, which come from a compliance platform its author built for a regulated business.
+Conway's Automaton. It has survival tiers that get cheaper as the agent's wallet empties. Reins keeps the tiers and drops the wallet, and adds the policy engine and the ledger, which come from an operations platform its author built for a regulated business.
 
 ## What is the licence?
 

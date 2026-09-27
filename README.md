@@ -205,7 +205,7 @@ Nothing hosted is needed to use anything in this repo.
 
 ## Why
 
-I run a hedge fund. A few years ago I built an operations platform for it, and the parts that mattered most turned out to be the boring ones: a policy check in front of every action, an append only log with a hash chain, and an evidence export that a compliance reviewer could actually read without me in the room.
+I run a hedge fund. A few years ago I built an operations platform for it, and the parts that mattered most turned out to be the boring ones: a policy check in front of every action, an append only log with a hash chain, and an evidence export that an auditor could actually read without me in the room.
 
 When agents started running unattended I read Conway's Automaton and liked the survival tier idea: as the wallet empties, the agent gets cheaper and slower until it sleeps. I did not want the wallet. I wanted the control ideas on top of the API keys I already had, with the same kind of ledger I already trusted. So I built Reins and this is it.
 
