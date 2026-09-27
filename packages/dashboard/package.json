@@ -1,0 +1,24 @@
+{
+  "name": "@reins/dashboard",
+  "version": "0.1.0",
+  "description": "Local web dashboard for Reins: tier, spend, decisions, policy events, ledger verification and evidence packs",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "files": ["dist", "README.md"],
+  "engines": { "node": ">=22.5" },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "demo": "tsx scripts/demo.ts"
+  },
+  "dependencies": {
+    "reins": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0"
+  },
+  "keywords": ["ai", "agents", "budget", "governance", "dashboard", "audit"]
+}
