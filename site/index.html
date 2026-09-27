@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>reins</title>
+<meta name="description" content="Reins is the control layer for autonomous AI agents. A budget governor and a governance ledger, open source under MIT.">
+<style>
+:root {
+  --paper: #f6f4ef;
+  --ink: #14181d;
+  --ink-2: #4a5058;
+  --rule: #d9d5cc;
+  --panel: #eeebe4;
+  --accent: #b5541c;
+  --allow: #2f6b3c;
+  --deny: #a63d2f;
+  --warn: #8a6a1a;
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  --measure: 62ch;
+  --gutter: 16px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #14181d;
+    --ink: #f6f4ef;
+    --ink-2: #a9b0b8;
+    --rule: #2a3038;
+    --panel: #1c2127;
+    --accent: #d9884f;
+    --allow: #7fb88a;
+    --deny: #e08a7a;
+    --warn: #d4b25c;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #14181d;
+  --ink: #f6f4ef;
+  --ink-2: #a9b0b8;
+  --rule: #2a3038;
+  --panel: #1c2127;
+  --accent: #d9884f;
+  --allow: #7fb88a;
+  --deny: #e08a7a;
+  --warn: #d4b25c;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  padding-inline: var(--gutter);
+  padding-block: 0 48px;
+}
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+h1, h2, h3 { line-height: 1.15; font-weight: 600; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(30px, 5.2vw, 46px); letter-spacing: -0.01em; }
+h2 { font-size: clamp(22px, 3.2vw, 28px); }
+h3 { font-size: 18px; }
+p { margin: 0; max-width: var(--measure); }
+p + p { margin-top: 12px; }
+code, pre, kbd { font-family: var(--mono); font-size: 0.92em; }
+code { background: var(--panel); padding: 1px 5px; border-radius: 3px; }
+pre {
+  margin: 0;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  line-height: 1.5;
+  font-size: 13.5px;
+  tab-size: 2;
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+.wrap { max-width: 1040px; margin-inline: auto; }
+.eyebrow {
+  font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--ink-2); font-weight: 600; margin-bottom: 10px;
+}
+section { padding-block: 44px; border-top: 1px solid var(--rule); }
+section > .wrap > h2 { margin-bottom: 8px; }
+.lede { color: var(--ink-2); margin-bottom: 24px; }
+.mono { font-family: var(--mono); }
+.num { font-variant-numeric: tabular-nums; }
+
+/* header */
+header.top {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap;
+  padding-block: 18px;
+}
+.wordmark { font-family: var(--mono); font-weight: 500; font-size: 20px; color: var(--ink); text-decoration: none; letter-spacing: -0.01em; }
+.wordmark b { color: var(--accent); font-weight: 500; }
+nav.top-nav { display: flex; gap: 6px 18px; font-size: 14px; flex-wrap: wrap; }
+nav.top-nav a { color: var(--ink); text-decoration: none; }
+nav.top-nav a:hover { color: var(--accent); }
+
+/* hero */
+.hero { padding-block: 40px 52px; border-top: 0; }
+.hero h1 { max-width: 20ch; margin-bottom: 18px; }
+.hero p { font-size: 18px; color: var(--ink-2); max-width: 58ch; }
+.installs { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 28px; max-width: 720px; }
+.install { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; min-width: 0; }
+.install .label { font-size: 12px; color: var(--ink-2); letter-spacing: 0.04em; text-transform: uppercase; font-weight: 600; }
+.cmd { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.cmd pre { flex: 1; min-width: 0; padding: 11px 14px; }
+.cmd pre::before { content: '$ '; color: var(--ink-2); }
+.cmd pre.slash::before { content: ''; }
+.copy {
+  font: 600 12px var(--sans); border: 1px solid var(--rule); background: var(--paper); color: var(--ink);
+  border-radius: 4px; padding: 8px 10px; cursor: pointer; white-space: nowrap;
+}
+.copy:hover { border-color: var(--ink-2); }
+.hero-links { margin-top: 22px; display: flex; gap: 18px; flex-wrap: wrap; font-size: 15px; }
+
+/* products */
+.products { display: grid; gap: 16px; }
+@media (min-width: 720px) { .products { grid-template-columns: 1fr 1fr; } }
+.product {
+  border: 1px solid var(--rule); border-radius: 6px; padding: 22px 22px 20px;
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; align-content: start; background: var(--paper);
+  min-width: 0;
+}
+.product h3 { font-size: 20px; }
+.product .kicker { font-family: var(--mono); font-size: 12px; color: var(--ink-2); letter-spacing: 0.04em; }
+.product ul { margin: 0; padding-left: 18px; color: var(--ink); }
+.product li + li { margin-top: 6px; }
+.product li b { font-weight: 600; }
+
+/* diagram */
+.diagram { overflow-x: auto; margin-top: 8px; padding-bottom: 6px; }
+.diagram svg { display: block; width: 100%; min-width: 760px; height: auto; }
+.diagram text { font-family: var(--sans); font-size: 13px; fill: var(--ink); }
+.diagram .t-mono { font-family: var(--mono); font-size: 12px; fill: var(--ink-2); }
+.diagram .box { fill: var(--paper); stroke: var(--ink); stroke-width: 1.2; }
+.diagram .box.ledger { fill: var(--panel); }
+.diagram .arrow { stroke: var(--ink); stroke-width: 1.2; fill: none; }
+.diagram .t-allow { fill: var(--allow); }
+.diagram .t-deny { fill: var(--deny); }
+.diagram .t-warn { fill: var(--warn); }
+.diagram .dashed { stroke: var(--ink-2); stroke-dasharray: 4 3; fill: none; stroke-width: 1; }
+.diagram .head { fill: var(--ink); }
+.legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; color: var(--ink-2); margin-top: 10px; }
+.legend span::before { content: ''; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+.legend .l-allow::before { background: var(--allow); }
+.legend .l-warn::before { background: var(--warn); }
+.legend .l-deny::before { background: var(--deny); }
+
+/* tables */
+.table-wrap { overflow-x: auto; margin-top: 18px; }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; min-width: 560px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-2); font-weight: 600; background: var(--panel); }
+td.mono { white-space: nowrap; }
+.tier { display: inline-block; font-family: var(--mono); font-size: 13px; padding: 1px 7px; border-radius: 3px; border: 1px solid var(--rule); }
+.tier.high, .tier.normal { color: var(--allow); border-color: var(--allow); }
+.tier.low, .tier.critical { color: var(--warn); border-color: var(--warn); }
+.tier.dead { color: var(--deny); border-color: var(--deny); }
+.fw { font-weight: 600; white-space: nowrap; }
+
+/* tabs */
+.tabs { margin-top: 18px; }
+.tablist { display: flex; gap: 4px; flex-wrap: wrap; border-bottom: 1px solid var(--rule); }
+.tab {
+  font: 600 14px var(--sans); background: none; border: 0; color: var(--ink-2);
+  padding: 10px 12px; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.tab:hover { color: var(--ink); }
+.panel { padding-top: 14px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.panel[hidden] { display: none; }
+.panel p { font-size: 14.5px; color: var(--ink-2); }
+
+/* pricing */
+.plans { display: grid; gap: 16px; margin-top: 18px; }
+@media (min-width: 720px) { .plans { grid-template-columns: 1fr 1fr; } }
+.plan { border: 1px solid var(--rule); border-radius: 6px; padding: 22px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; align-content: start; min-width: 0; }
+.plan.cloud { border-color: var(--ink-2); }
+.plan .price { font-family: var(--mono); font-size: 26px; font-weight: 500; }
+.plan .price small { font-family: var(--sans); font-size: 14px; color: var(--ink-2); font-weight: 400; }
+.plan ul { margin: 0; padding-left: 18px; }
+.plan li + li { margin-top: 5px; }
+.badge { display: inline-block; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; color: var(--ink-2); border: 1px solid var(--rule); border-radius: 3px; padding: 2px 7px; justify-self: start; }
+.btn {
+  display: inline-block; font: 600 14px var(--sans); text-decoration: none; padding: 10px 16px; border-radius: 4px;
+  border: 1px solid var(--ink); color: var(--ink); background: transparent; cursor: pointer; justify-self: start;
+}
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.primary:hover { filter: brightness(0.94); }
+:root[data-theme="dark"] .btn.primary { color: var(--paper); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn.primary { color: #14181d; } }
+
+/* waitlist */
+form.waitlist { display: grid; gap: 10px; max-width: 520px; margin-top: 18px; }
+@media (min-width: 560px) { form.waitlist { grid-template-columns: 1fr auto; align-items: end; } form.waitlist .status { grid-column: 1 / -1; } }
+form.waitlist label { display: grid; gap: 6px; font-size: 13px; color: var(--ink-2); }
+form.waitlist input[type="email"] {
+  font: 15px var(--sans); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 4px;
+  background: var(--paper); color: var(--ink); width: 100%;
+}
+form.waitlist input[type="email"]:focus { border-color: var(--accent); outline: none; }
+form.waitlist .status { font-size: 14px; color: var(--ink-2); min-height: 1.4em; }
+form.waitlist .status.ok { color: var(--allow); }
+form.waitlist .status.err { color: var(--deny); }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+/* footer */
+footer { border-top: 1px solid var(--rule); padding-block: 26px; font-size: 14px; color: var(--ink-2); }
+footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+footer a { color: var(--ink); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .tab, .copy, .btn, a { transition: color .12s, border-color .12s, background-color .12s; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <a class="wordmark" href="#">reins<b>.</b></a>
+    <nav class="top-nav" aria-label="Site">
+      <a href="#products">Products</a>
+      <a href="#code">Code</a>
+      <a href="#pricing">Pricing</a>
+      <a href="https://github.com/Richie2956/reins/tree/main/docs">Docs</a>
+      <a href="https://github.com/Richie2956/reins">GitHub</a>
+    </nav>
+  </header>
+</div>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>The control layer for autonomous AI agents.</h1>
+    <p>A budget governor that steps models down as spend rises, slows the heartbeat, stops idle loops and halts at zero. A governance ledger that checks every tool call, keeps a hash chained audit trail, and exports evidence an auditor can read. Open source, MIT, everything local.</p>
+
+    <div class="installs">
+      <div class="install">
+        <span class="label">CLI, proxy and evidence</span>
+        <div class="cmd">
+          <pre><code id="cmd1">npm i -g @reins/cli</code></pre>
+          <button class="copy" type="button" data-copy="cmd1">Copy</button>
+        </div>
+      </div>
+      <div class="install">
+        <span class="label">Claude Code plugin</span>
+        <div class="cmd">
+          <pre class="slash"><code id="cmd2">/plugin marketplace add Richie2956/reins &amp;&amp; /plugin install reins@reins</code></pre>
+          <button class="copy" type="button" data-copy="cmd2">Copy</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-links">
+      <a href="https://github.com/Richie2956/reins/blob/main/docs/getting-started.md">Sixty second start</a>
+      <a href="#flow">How a turn flows</a>
+      <a href="#controls">Control mapping</a>
+    </div>
+  </div>
+</section>
+
+<section id="products">
+  <div class="wrap">
+    <h2>Two products, one ledger</h2>
+    <p class="lede">Use either on its own. Together they cover what an unattended agent can spend and what it can touch.</p>
+    <div class="products">
+      <article class="product">
+        <span class="kicker">reins budget</span>
+        <h3>Budget governor</h3>
+        <p>Meters spend per agent per period and picks a tier from what is left.</p>
+        <ul>
+          <li><b>Steps the model down.</b> Opus while the budget is healthy, Sonnet in the middle, Haiku near the floor.</li>
+          <li><b>Slows the heartbeat.</b> A multiplier your loop applies to its sleep. Four times slower in <code>low</code>, eight in <code>critical</code>.</li>
+          <li><b>Stops idle loops.</b> Three read only turns in a row and the decision is <code>sleep</code>.</li>
+          <li><b>Halts at zero.</b> Dead after a grace period. The proxy returns 402, the adapters throw.</li>
+        </ul>
+      </article>
+      <article class="product">
+        <span class="kicker">reins govern</span>
+        <h3>Governance ledger</h3>
+        <p>A policy check before every tool call and a record after it.</p>
+        <ul>
+          <li><b>Policy engine.</b> Protected paths, blocked commands, denied tools, approval tools, rate limits and spend caps that actually deny.</li>
+          <li><b>Hash chained ledger.</b> Append only SQLite. <code>reins ledger verify</code> finds the first broken event.</li>
+          <li><b>Evidence pack.</b> One HTML file per period, mapped to SOC 2, ISO 27001, NIST AI RMF and the EU AI Act.</li>
+          <li><b>Nothing leaves the machine.</b> No telemetry, no account, no upload.</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="flow">
+  <div class="wrap">
+    <h2>How a turn flows</h2>
+    <p class="lede">Every model call and every tool call passes the same six points. Each one writes to the ledger.</p>
+    <div class="diagram" role="img" aria-label="Flow of one agent turn through Reins: decide, substitute model, policy check, execute, record, ledger. Decide can stop or sleep. Policy check can deny or ask for approval. Every step writes to the ledger.">
+      <svg viewBox="0 0 960 250" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L8,4 L0,8 z" class="head"/>
+          </marker>
+        </defs>
+
+        <!-- boxes row -->
+        <g>
+          <rect class="box" x="12" y="60" width="130" height="56" rx="4"/>
+          <text x="77" y="84" text-anchor="middle" font-weight="600">decide</text>
+          <text x="77" y="102" text-anchor="middle" class="t-mono">tier, idle, dead</text>
+
+          <rect class="box" x="200" y="60" width="150" height="56" rx="4"/>
+          <text x="275" y="84" text-anchor="middle" font-weight="600">substitute model</text>
+          <text x="275" y="102" text-anchor="middle" class="t-mono">clamp max_tokens</text>
+
+          <rect class="box" x="408" y="60" width="150" height="56" rx="4"/>
+          <text x="483" y="84" text-anchor="middle" font-weight="600">policy check</text>
+          <text x="483" y="102" text-anchor="middle" class="t-mono">paths, commands, spend</text>
+
+          <rect class="box" x="616" y="60" width="110" height="56" rx="4"/>
+          <text x="671" y="84" text-anchor="middle" font-weight="600">execute</text>
+          <text x="671" y="102" text-anchor="middle" class="t-mono">model or tool</text>
+
+          <rect class="box" x="784" y="60" width="110" height="56" rx="4"/>
+          <text x="839" y="84" text-anchor="middle" font-weight="600">record</text>
+          <text x="839" y="102" text-anchor="middle" class="t-mono">usage, change</text>
+        </g>
+
+        <!-- forward arrows -->
+        <g class="arrow" marker-end="url(#ah)">
+          <line x1="142" y1="88" x2="198" y2="88"/>
+          <line x1="350" y1="88" x2="406" y2="88"/>
+          <line x1="558" y1="88" x2="614" y2="88"/>
+          <line x1="726" y1="88" x2="782" y2="88"/>
+        </g>
+        <text x="170" y="79" text-anchor="middle" class="t-mono t-allow" font-size="11">continue</text>
+        <text x="586" y="79" text-anchor="middle" class="t-mono t-allow" font-size="11">allow</text>
+
+        <!-- decide exits -->
+        <g class="arrow" marker-end="url(#ah)">
+          <path d="M60,60 V30 H118"/>
+        </g>
+        <text x="126" y="34" class="t-mono t-deny">stop (402)</text>
+        <text x="126" y="16" class="t-mono t-warn">sleep, heartbeat x4 or x8</text>
+        <g class="arrow" marker-end="url(#ah)">
+          <path d="M40,60 V12 H118"/>
+        </g>
+
+        <!-- policy exits -->
+        <g class="arrow" marker-end="url(#ah)">
+          <path d="M450,60 V30 H512"/>
+          <path d="M430,60 V12 H512"/>
+        </g>
+        <text x="520" y="34" class="t-mono t-deny">deny, with the rule</text>
+        <text x="520" y="16" class="t-mono t-warn">approve, ask a person</text>
+
+        <!-- ledger -->
+        <rect class="box ledger" x="12" y="176" width="882" height="56" rx="4"/>
+        <text x="30" y="200" font-weight="600">ledger</text>
+        <text x="30" y="218" class="t-mono">append only, hash = sha256(prevHash + canonical(event)), reins ledger verify</text>
+        <text x="876" y="209" text-anchor="end" class="t-mono">evidence pack</text>
+
+        <!-- drops to ledger -->
+        <g class="dashed" marker-end="url(#ah)">
+          <line x1="77" y1="116" x2="77" y2="174"/>
+          <line x1="483" y1="116" x2="483" y2="174"/>
+          <line x1="671" y1="116" x2="671" y2="174"/>
+          <line x1="839" y1="116" x2="839" y2="174"/>
+        </g>
+        <text x="85" y="150" class="t-mono">decision</text>
+        <text x="491" y="150" class="t-mono">policy</text>
+        <text x="679" y="150" class="t-mono">modification</text>
+        <text x="847" y="150" class="t-mono">usage</text>
+      </svg>
+    </div>
+    <div class="legend">
+      <span class="l-allow">continue, allow</span>
+      <span class="l-warn">sleep, approve</span>
+      <span class="l-deny">stop, deny</span>
+    </div>
+  </div>
+</section>
+
+<section id="tiers">
+  <div class="wrap">
+    <h2>Tiers</h2>
+    <p class="lede">Walked top to bottom. The first tier whose threshold is at or below the remaining budget wins. These are the defaults from <code>reins init</code>.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Tier</th><th>Remaining at least</th><th>Model</th><th>Heartbeat</th><th>Tokens per turn</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="tier high">high</span></td><td class="num">$5.00</td><td class="mono">claude-opus-5</td><td class="num">x1</td><td>as requested</td></tr>
+          <tr><td><span class="tier normal">normal</span></td><td class="num">$0.50</td><td class="mono">claude-sonnet-5</td><td class="num">x1</td><td>as requested</td></tr>
+          <tr><td><span class="tier low">low</span></td><td class="num">$0.10</td><td class="mono">claude-haiku-4-5-20251001</td><td class="num">x4</td><td>as requested</td></tr>
+          <tr><td><span class="tier critical">critical</span></td><td class="num">$0.00</td><td class="mono">claude-haiku-4-5-20251001</td><td class="num">x8</td><td class="num">1024</td></tr>
+          <tr><td><span class="tier dead">dead</span></td><td>below zero for 60 minutes</td><td colspan="3">every decision is <code>stop</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="controls">
+  <div class="wrap">
+    <h2>Control mapping</h2>
+    <p class="lede">The evidence pack carries this table with a one sentence statement per row, written for the auditor, and the counts for the period.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Framework</th><th>Control</th><th>Satisfied by</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="fw">SOC 2</td><td>CC6.1 Logical access</td><td>Policy checks, denials, config hash</td></tr>
+          <tr><td class="fw">SOC 2</td><td>CC6.8 Unauthorised software</td><td>Rate limit and blocked command denials</td></tr>
+          <tr><td class="fw">SOC 2</td><td>CC7.2 System monitoring</td><td>Ledger verification, totals, spend by day</td></tr>
+          <tr><td class="fw">SOC 2</td><td>CC8.1 Change management</td><td>Modification log</td></tr>
+          <tr><td class="fw">ISO 27001:2022</td><td>A.5.15 Access control</td><td>Policy checks, denials</td></tr>
+          <tr><td class="fw">ISO 27001:2022</td><td>A.8.15 Logging</td><td>Ledger verification, totals</td></tr>
+          <tr><td class="fw">ISO 27001:2022</td><td>A.8.16 Monitoring activities</td><td>Decisions, spend by day</td></tr>
+          <tr><td class="fw">ISO 27001:2022</td><td>A.8.32 Change management</td><td>Modification log</td></tr>
+          <tr><td class="fw">NIST AI RMF 1.0</td><td>GOVERN 1.7 Decommissioning</td><td>Stop decisions, lifecycle events</td></tr>
+          <tr><td class="fw">NIST AI RMF 1.0</td><td>MANAGE 2.2 Sustaining deployed systems</td><td>Tier decisions, spend by day</td></tr>
+          <tr><td class="fw">NIST AI RMF 1.0</td><td>MANAGE 4.1 Post deployment monitoring</td><td>Ledger, approvals, decisions</td></tr>
+          <tr><td class="fw">EU AI Act</td><td>Article 12 Record keeping</td><td>The whole ledger, verified</td></tr>
+          <tr><td class="fw">EU AI Act</td><td>Article 14 Human oversight</td><td>Approval events, stop decisions</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="code">
+  <div class="wrap">
+    <h2>Four ways in</h2>
+    <p class="lede">Pick the one that matches how your agent runs. All four write to the same ledger.</p>
+    <div class="tabs">
+      <div class="tablist" role="tablist" aria-label="Integration">
+        <button class="tab" role="tab" id="tab-proxy" aria-controls="panel-proxy" aria-selected="true" type="button">Proxy</button>
+        <button class="tab" role="tab" id="tab-cc" aria-controls="panel-cc" aria-selected="false" tabindex="-1" type="button">Claude Code plugin</button>
+        <button class="tab" role="tab" id="tab-anthropic" aria-controls="panel-anthropic" aria-selected="false" tabindex="-1" type="button">Anthropic SDK</button>
+        <button class="tab" role="tab" id="tab-vercel" aria-controls="panel-vercel" aria-selected="false" tabindex="-1" type="button">Vercel AI SDK</button>
+      </div>
+
+      <div class="panel" role="tabpanel" id="panel-proxy" aria-labelledby="tab-proxy">
+        <p>No code change. Point any runtime at the proxy and read the tier from the response headers.</p>
+<pre><code>reins proxy --port 4141
+
+ANTHROPIC_BASE_URL=http://localhost:4141 node agent.js
+OPENAI_BASE_URL=http://localhost:4141/v1 python agent.py
+
+# response headers
+x-reins-tier: normal
+x-reins-remaining-usd: 14.20
+x-reins-model: claude-sonnet-5
+
+# when the agent is dead
+HTTP/1.1 402
+{ "error": "budget_exhausted", "state": { "tier": "dead", ... } }</code></pre>
+      </div>
+
+      <div class="panel" role="tabpanel" id="panel-cc" aria-labelledby="tab-cc" hidden>
+        <p>Hooks check every tool call, record every change and meter the transcript at the end of each turn.</p>
+<pre><code>npm i -g @reins/cli
+reins init
+
+# inside Claude Code
+/plugin marketplace add Richie2956/reins
+/plugin install reins@reins
+
+# what you see
+PreToolUse   reins check Write .env      deny  protectedPaths
+PreToolUse   reins check Bash rm -rf /   deny  blockedCommands
+PreToolUse   reins check spawn_child     approve  (Claude Code asks you)
+Stop         recorded claude-sonnet-5 12000 in 800 out  tier normal  $14.20 left</code></pre>
+      </div>
+
+      <div class="panel" role="tabpanel" id="panel-anthropic" aria-labelledby="tab-anthropic" hidden>
+        <p>Wrap the client. Decide, substitute, clamp and record happen around <code>messages.create</code>, streaming included.</p>
+<pre><code>import Anthropic from '@anthropic-ai/sdk';
+import { Reins } from 'reins';
+import { withReins } from '@reins/adapters';
+
+const reins = Reins.open();                 // reads reins.yml
+const client = withReins(new Anthropic(), reins);
+
+const msg = await client.messages.create({
+  model: 'claude-opus-5',                   // substituted by tier
+  max_tokens: 4096,                         // clamped by tier
+  messages: [{ role: 'user', content: 'Summarise the overnight logs.' }],
+});
+
+// before a tool runs
+const v = reins.policy.check({ tool: 'Bash', input: { command } });
+if (v.verdict === 'deny') throw new Error(v.reason);</code></pre>
+      </div>
+
+      <div class="panel" role="tabpanel" id="panel-vercel" aria-labelledby="tab-vercel" hidden>
+        <p>Middleware for <code>wrapLanguageModel</code>. Works with any provider the AI SDK supports.</p>
+<pre><code>import { wrapLanguageModel, generateText } from 'ai';
+import { anthropic } from '@ai-sdk/anthropic';
+import { Reins } from 'reins';
+import { reinsMiddleware } from '@reins/adapters';
+
+const reins = Reins.open();
+const model = wrapLanguageModel({
+  model: anthropic('claude-sonnet-5'),
+  middleware: reinsMiddleware(reins),
+});
+
+const { text } = await generateText({ model, prompt: 'Triage the inbox.' });</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <h2>Pricing</h2>
+    <p class="lede">Everything that governs an agent is in the repo and stays there. The paid part is the hosted view across many of them.</p>
+    <div class="plans">
+      <article class="plan">
+        <span class="badge">Open source</span>
+        <h3>Free forever</h3>
+        <div class="price">£0</div>
+        <p>Everything in the repo, MIT licensed.</p>
+        <ul>
+          <li>Budget governor and policy engine</li>
+          <li>Hash chained ledger and evidence pack</li>
+          <li>CLI, proxy, Claude Code plugin, adapters</li>
+          <li>Local dashboard</li>
+        </ul>
+        <a class="btn" href="https://github.com/Richie2956/reins">View on GitHub</a>
+      </article>
+      <article class="plan cloud">
+        <span class="badge">Cloud, coming soon</span>
+        <h3>Reins Cloud</h3>
+        <div class="price">from £29 <small>a month</small></div>
+        <p>For teams running a fleet.</p>
+        <ul>
+          <li>Hosted fleet dashboard across agents and machines</li>
+          <li>Signed evidence packs</li>
+          <li>Retention and alerts</li>
+          <li>Nothing pushed unless you choose to</li>
+        </ul>
+        <a class="btn primary" href="#waitlist">Join the waitlist</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="waitlist">
+  <div class="wrap">
+    <h2>Waitlist</h2>
+    <p class="lede">One email when Cloud opens. Nothing else.</p>
+    <form class="waitlist" action="https://formspree.io/f/REPLACE_ME" method="POST" novalidate>
+      <label for="email">Email
+        <input type="email" id="email" name="email" autocomplete="email" required placeholder="you@company.com">
+      </label>
+      <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button class="btn primary" type="submit" id="join">Join</button>
+      <div class="status" id="status" role="status" aria-live="polite"></div>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span><a class="wordmark" href="#">reins<b>.</b></a></span>
+    <span><a href="https://github.com/Richie2956/reins">github.com/Richie2956/reins</a></span>
+    <span>MIT licence. Built by Richard Liddle.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  // copy buttons
+  document.querySelectorAll('.copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var el = document.getElementById(btn.getAttribute('data-copy'));
+      var text = el ? el.textContent : '';
+      var done = function () { btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = 'Copy'; }, 1400); };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, done);
+      } else {
+        var r = document.createRange(); r.selectNodeContents(el);
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+        try { document.execCommand('copy'); } catch (e) {}
+        s.removeAllRanges(); done();
+      }
+    });
+  });
+
+  // tabs
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+  function select(tab) {
+    tabs.forEach(function (t) {
+      var on = t === tab;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    });
+    try { localStorage.setItem('reins.tab', tab.id); } catch (e) {}
+  }
+  tabs.forEach(function (t, i) {
+    t.addEventListener('click', function () { select(t); });
+    t.addEventListener('keydown', function (e) {
+      var j = i;
+      if (e.key === 'ArrowRight') j = (i + 1) % tabs.length;
+      else if (e.key === 'ArrowLeft') j = (i - 1 + tabs.length) % tabs.length;
+      else if (e.key === 'Home') j = 0;
+      else if (e.key === 'End') j = tabs.length - 1;
+      else return;
+      e.preventDefault(); select(tabs[j]); tabs[j].focus();
+    });
+  });
+  try {
+    var saved = localStorage.getItem('reins.tab');
+    var t = saved && document.getElementById(saved);
+    if (t && t.getAttribute('role') === 'tab') select(t);
+  } catch (e) {}
+
+  // waitlist
+  var form = document.querySelector('form.waitlist');
+  var status = document.getElementById('status');
+  var email = document.getElementById('email');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    status.className = 'status';
+    if (!email.value || !email.checkValidity()) {
+      status.textContent = 'That does not look like an email address.';
+      status.className = 'status err'; email.focus(); return;
+    }
+    if (form.action.indexOf('REPLACE_ME') !== -1) {
+      status.textContent = 'The waitlist endpoint is not configured yet. Replace REPLACE_ME in the form action with your Formspree id.';
+      status.className = 'status err'; return;
+    }
+    var btn = document.getElementById('join');
+    btn.disabled = true; status.textContent = 'Sending';
+    fetch(form.action, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email.value })
+    }).then(function (r) {
+      if (r.ok) { status.textContent = 'Added. Thank you.'; status.className = 'status ok'; form.reset(); }
+      else { status.textContent = 'Something went wrong. Try again in a minute.'; status.className = 'status err'; }
+    }).catch(function () {
+      status.textContent = 'Could not reach the server. Try again in a minute.'; status.className = 'status err';
+    }).then(function () { btn.disabled = false; });
+  });
+})();
+</script>
+</body>
+</html>
