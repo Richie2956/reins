@@ -13,7 +13,7 @@ Open core. MIT licence on everything in this repo. Paid tier later is hosted (fl
 - TypeScript strict, ESM only (`"type": "module"`, `module: NodeNext`). Imports between packages use the package name (`reins`, `@reins/proxy`), never relative paths across packages.
 - Tests with vitest. Every package ships tests that pass with `pnpm test` from the repo root.
 - Never change `packages/core/src/types.ts` without appending a note under 'Contract changes' at the bottom of this file. Other agents code against those types concurrently.
-- Prose (README, docs, site, marketing) follows the house style: no dashes as punctuation, no semicolon followed by and, avoid hyphens where a plain word works, single quotes. Load the `house-style` skill before writing prose.
+- Prose (README, docs, site) follows the house style: no dashes as punctuation, no semicolon followed by and, avoid hyphens where a plain word works, single quotes.
 - No emojis anywhere. No 'blazing fast', no 'seamless', no 'revolutionary'.
 - Commit your own package's work to git with clear messages when done. Do not commit other packages' files.
 
@@ -32,7 +32,6 @@ reins/
     adapters/             npm: @reins/adapters  wrappers: Anthropic SDK, OpenAI SDK, Vercel AI SDK middleware
     dashboard/            npm: @reins/dashboard local web UI served by `reins dashboard`
   site/                   static landing page + docs, GitHub Pages
-  marketing/              launch plan, posts, pricing
   docs/                   user docs (markdown), also rendered by site
 ```
 

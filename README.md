@@ -213,4 +213,4 @@ Richard Liddle
 
 ## Licence
 
-MIT. See [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE). Origin of the code and the ideas is in [PROVENANCE.md](PROVENANCE.md). Contributions are accepted under the Developer Certificate of Origin, so sign your commits with `git commit -s`.
