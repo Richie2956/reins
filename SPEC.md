@@ -177,3 +177,17 @@ Served by `reins dashboard --port 4242`. Node http server, one HTML page plus a 
 ## Contract changes
 
 (append here, dated, when `types.ts` changes)
+
+### 2026-09-27, core: additive constructor options, no change to types.ts
+
+`types.ts` is unchanged. The public class signatures gained optional trailing parameters only; every call shape in the API block above still works.
+
+- `new PolicyEngine(config, ledger, agentId, getState?: () => BudgetState, opts?: { now?: () => Date })`. The fourth parameter supplies the governor's state so `spend.minReserveUsd` can actually deny. Without it the reserve rule is skipped. `Reins.open` wires it as `() => governor.state()`.
+- `new BudgetGovernor(config, ledger, agentId, opts?: { now?: () => Date; store?: Store })`. `now` is an injectable clock for tests. `store` is where `zeroSince` and `idleTurns` live in the `kv` table; it defaults to the ledger's store.
+- `new Ledger(store, opts?: { now?: () => Date })` and `ledger.append(agentId, type, payload, at?: string)`. `at` lets usage events carry their own timestamp; it is normalised to ISO 8601 UTC. `Ledger` also exposes `store` (public readonly) and `head()`.
+- `buildEvidence({ ledger, config, from?, to?, now? })`. `now` fixes `generatedAt` so `packHash` is reproducible in tests.
+- `Reins` gained `static fromConfig(config, { store?, now? })`, an optional fifth constructor argument `store`, and `close()`.
+- `ledger.list` with `limit` returns the most recent `limit` events, still in ascending seq order. `from` and `to` are inclusive.
+- Extra named exports from `reins` beyond the API block: `openMemoryStore`, `expandHome`, `canonicalJson`, `sha256`, `ZERO_HASH`, `eventHash`, `toIso`, `resolvePrice`, `costOf`, `normaliseModelId`, `periodStart`, `selectTier`, `TIER_ORDER`, `globToRegExp`, `collectStrings`, `collectSpend`, `resolveConfigPath`, `validateConfig`, `deepMerge`, `parseConfigText`, `CONFIG_FILENAMES`, `CONTROLS`, `FRAMEWORKS`.
+- Spend caps: a `maxSingleUsd`, `maxHourlyUsd`, `maxDailyUsd` or `minReserveUsd` of 0 means that cap is off. Hourly and daily are rolling windows (60 minutes, 24 hours) ending at the call time. The `amount` field is honoured alongside `costUsd` and `amountUsd`.
+- Lifecycle events: `budget_exhausted` (once per period, when remaining first hits zero), `dead` and `revived` (on `decide` when alive flips).

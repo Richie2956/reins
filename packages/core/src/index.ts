@@ -1,48 +1,56 @@
 /**
- * Reins core. STUB: the core agent replaces every body below.
- * The export surface is the contract in SPEC.md. Keep the names and signatures.
+ * Reins core: budget governor, policy engine, hash chained ledger, evidence
+ * pack and config. The export surface is the contract in SPEC.md.
  */
 export * from './types.js';
-import type {
-  BudgetConfig, BudgetState, Decision, EvidencePack, LedgerEvent, LedgerEventType,
-  LedgerFilter, LedgerVerification, ModelPrice, PolicyConfig, PolicyResult, ReinsConfig,
-  Store, ToolCall, Usage,
-} from './types.js';
+export { openStore, openMemoryStore, expandHome } from './store.js';
+export { Ledger, eventHash, toIso } from './ledger.js';
+export type { LedgerOptions } from './ledger.js';
+export { canonicalJson, sha256, ZERO_HASH } from './hash.js';
+export { PRICES, resolvePrice, costOf, normaliseModelId } from './prices.js';
+export { BudgetGovernor, periodStart, selectTier, TIER_ORDER } from './budget.js';
+export type { BudgetGovernorOptions } from './budget.js';
+export { PolicyEngine, globToRegExp, collectStrings, collectSpend } from './policy.js';
+export type { PolicyEngineOptions } from './policy.js';
+export { defaultConfig, loadConfig, resolveConfigPath, validateConfig, deepMerge, parseConfigText, CONFIG_FILENAMES } from './config.js';
+export { CONTROLS, FRAMEWORKS } from './controls.js';
+export { buildEvidence, renderEvidenceHtml } from './evidence.js';
+export type { BuildEvidenceOptions } from './evidence.js';
 
-const NOT_IMPLEMENTED = () => new Error('reins core: not implemented yet');
+import { BudgetGovernor } from './budget.js';
+import { loadConfig } from './config.js';
+import { Ledger } from './ledger.js';
+import { PolicyEngine } from './policy.js';
+import { openStore } from './store.js';
+import type { ReinsConfig, Store } from './types.js';
 
-export const PRICES: Record<string, ModelPrice> = {};
-
-export function defaultConfig(): ReinsConfig { throw NOT_IMPLEMENTED(); }
-export function loadConfig(_path?: string): ReinsConfig { throw NOT_IMPLEMENTED(); }
-export function openStore(_path: string): Store { throw NOT_IMPLEMENTED(); }
-
-export class Ledger {
-  constructor(_store: Store) {}
-  append(_agentId: string, _type: LedgerEventType, _payload: Record<string, unknown>): LedgerEvent { throw NOT_IMPLEMENTED(); }
-  list(_filter?: LedgerFilter): LedgerEvent[] { throw NOT_IMPLEMENTED(); }
-  verify(_agentId?: string): LedgerVerification { throw NOT_IMPLEMENTED(); }
-  export(_filter?: LedgerFilter): LedgerEvent[] { throw NOT_IMPLEMENTED(); }
-}
-
-export class BudgetGovernor {
-  constructor(_config: BudgetConfig, _ledger: Ledger, _agentId: string) {}
-  costOf(_usage: Usage): number { throw NOT_IMPLEMENTED(); }
-  record(_usage: Usage): BudgetState { throw NOT_IMPLEMENTED(); }
-  state(): BudgetState { throw NOT_IMPLEMENTED(); }
-  modelFor(_requested: string): string { throw NOT_IMPLEMENTED(); }
-  decide(_turn: { tools: string[] }): Decision { throw NOT_IMPLEMENTED(); }
-}
-
-export class PolicyEngine {
-  constructor(_config: PolicyConfig, _ledger: Ledger, _agentId: string) {}
-  check(_call: ToolCall): PolicyResult { throw NOT_IMPLEMENTED(); }
-}
-
-export function buildEvidence(_opts: { ledger: Ledger; config: ReinsConfig; from?: string; to?: string }): EvidencePack { throw NOT_IMPLEMENTED(); }
-export function renderEvidenceHtml(_pack: EvidencePack): string { throw NOT_IMPLEMENTED(); }
-
+/** Convenience facade: config, store, ledger, governor and policy wired together. */
 export class Reins {
-  static open(_configPath?: string): Reins { throw NOT_IMPLEMENTED(); }
-  constructor(public config: ReinsConfig, public ledger: Ledger, public governor: BudgetGovernor, public policy: PolicyEngine) {}
+  /** Load config (explicit path, cwd, then ~/.reins) and open everything. */
+  static open(configPath?: string): Reins {
+    const config = loadConfig(configPath);
+    return Reins.fromConfig(config);
+  }
+
+  /** Build from an in memory config, useful for tests and embedding. */
+  static fromConfig(config: ReinsConfig, opts: { store?: Store; now?: () => Date } = {}): Reins {
+    const store = opts.store ?? openStore(config.storePath);
+    const now = opts.now;
+    const ledger = new Ledger(store, { now });
+    const governor = new BudgetGovernor(config.budget, ledger, config.agentId, { now });
+    const policy = new PolicyEngine(config.policy, ledger, config.agentId, () => governor.state(), { now });
+    return new Reins(config, ledger, governor, policy, store);
+  }
+
+  constructor(
+    public config: ReinsConfig,
+    public ledger: Ledger,
+    public governor: BudgetGovernor,
+    public policy: PolicyEngine,
+    public store?: Store,
+  ) {}
+
+  close(): void {
+    this.store?.close();
+  }
 }
