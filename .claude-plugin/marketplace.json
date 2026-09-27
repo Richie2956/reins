@@ -1,0 +1,14 @@
+{
+  "name": "reins",
+  "description": "Reins: budget governor and governance kit for autonomous AI agents",
+  "owner": { "name": "Reins" },
+  "plugins": [
+    {
+      "name": "reins",
+      "source": "./packages/claude-code",
+      "description": "Budget governor and policy hooks for Claude Code, backed by the reins CLI",
+      "version": "0.1.0",
+      "category": "productivity"
+    }
+  ]
+}

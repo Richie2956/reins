@@ -1,0 +1,11 @@
+{
+  "name": "@reins/claude-code",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Claude Code plugin: reins budget governor and policy hooks",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run"
+  }
+}

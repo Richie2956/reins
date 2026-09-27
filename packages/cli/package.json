@@ -1,0 +1,22 @@
+{
+  "name": "@reins/cli",
+  "version": "0.1.0",
+  "description": "The reins command line: init, status, check, record, decide, ledger, evidence, proxy and dashboard",
+  "license": "MIT",
+  "type": "module",
+  "bin": { "reins": "./dist/main.js" },
+  "main": "./dist/cli.js",
+  "types": "./dist/cli.d.ts",
+  "exports": { ".": { "types": "./dist/cli.d.ts", "import": "./dist/cli.js" } },
+  "files": ["dist", "README.md"],
+  "engines": { "node": ">=22.5" },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node -e \"require('node:fs').chmodSync('dist/main.js', 0o755)\"",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "commander": "^15.0.0",
+    "reins": "workspace:*"
+  },
+  "keywords": ["ai", "agents", "budget", "governance", "cli", "claude", "openai"]
+}
