@@ -1,0 +1,20 @@
+{
+  "name": "@reins/proxy",
+  "version": "0.1.0",
+  "description": "Local metering proxy for Reins: Anthropic Messages and OpenAI Chat Completions compatible, budget tiers, model substitution, usage capture",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "files": ["dist", "README.md"],
+  "engines": { "node": ">=22.5" },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "reins": "workspace:*"
+  },
+  "keywords": ["ai", "agents", "budget", "proxy", "anthropic", "openai", "claude"]
+}
