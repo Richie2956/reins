@@ -1,0 +1,40 @@
+{
+  "name": "@reins/adapters",
+  "version": "0.1.0",
+  "description": "Reins budget governor wrappers for the Anthropic SDK, the OpenAI SDK and the Vercel AI SDK",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./anthropic": { "types": "./dist/anthropic.d.ts", "import": "./dist/anthropic.js" },
+    "./openai": { "types": "./dist/openai.d.ts", "import": "./dist/openai.js" },
+    "./vercel": { "types": "./dist/vercel.d.ts", "import": "./dist/vercel.js" }
+  },
+  "files": ["dist", "README.md"],
+  "engines": { "node": ">=22.5" },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "reins": "workspace:*"
+  },
+  "peerDependencies": {
+    "@anthropic-ai/sdk": ">=0.50.0",
+    "ai": ">=5.0.0",
+    "openai": ">=4.80.0"
+  },
+  "peerDependenciesMeta": {
+    "@anthropic-ai/sdk": { "optional": true },
+    "ai": { "optional": true },
+    "openai": { "optional": true }
+  },
+  "devDependencies": {
+    "@anthropic-ai/sdk": "^0.128.0",
+    "ai": "^7.0.118",
+    "openai": "^7.23.0"
+  },
+  "keywords": ["ai", "agents", "budget", "governance", "anthropic", "openai", "vercel", "ai-sdk", "middleware"]
+}
